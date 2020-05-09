@@ -14,7 +14,7 @@ module.exports = function (opts) {
     opts.file = '.rebuildagain';
   }
   if (!opts.cmd) {
-    opts.cmd = 'scripts/build-production';
+    throw Error('opts.cmd is required');
   }
 
   var timeout;
@@ -22,7 +22,12 @@ module.exports = function (opts) {
 
   return function (req, res) {
     // TODO make sure it's legit from github
-    // TODO endpoint will need jsonparser
+var hash = req.headers["X-GITHUBWHATEVER"].replace(/^sha1:/, '');
+var secrethash = crypto.createHash('sha1').update("foo").digest();
+if (crypto.constantTimeCompare(hash, secrethash)) {
+console.log('fail')
+  return false;
+}
     // TODO make sure it's a commit to master, so i can update branches without rebuilding
     // if (req.body.refs != 'refs/heads/master') {
     //   return res.sendStatus(200);
