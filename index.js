@@ -40,7 +40,7 @@ module.exports = function (opts) {
       return res.sendStatus(401);
     }
 
-    if (req.body.refs != 'refs/heads/master') {
+    if (req.body.ref != 'refs/heads/master') {
       return res.sendStatus(200);
     }
 
