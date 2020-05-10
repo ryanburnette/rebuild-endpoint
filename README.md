@@ -3,30 +3,30 @@
 [![repo](https://img.shields.io/badge/repository-Github-black.svg?style=flat-square)](https://github.com/ryanburnette/rebuild-endpoint)
 [![npm](https://img.shields.io/badge/package-NPM-green.svg?style=flat-square)](https://www.npmjs.com/package/@ryanburnette/rebuild-endpoint)
 
-Express.js endpoint for having a rebuild endpoint in your app that takes a
-webhook request from Github.
+Express.js endpoint for having a rebuild endpoint in your app that takes a webhook request from
+Github.
 
 ## Options
 
 - `cmd` Rebuild command. Required.
+- `execCb` Callback passed to `exec`. Might want to console log responses from build command.
+  Optional.
 - `secret` The Github secret. Required.
-- `timeout` Time to wait between receiving a webhook and starting the rebuild.
-  Gets reset if another webhook is received while waiting. Defaults to
-  `1000 * 60` (one minute).
-- `file` Path to a file that, if exists, will trigger an immediate rebuild upon
-  app start. Handles situation where a rebuild is triggered while one is already
-  taking place. Defaults to `.rebuild`.
+- `timeout` Time to wait between receiving a webhook and starting the rebuild. Gets reset if another
+  webhook is received while waiting. Defaults to `1000 * 60` (one minute).
+- `branch` Branch to rebuild for. Defaults to `master`.
 
 ## Usage
 
+Works with Express.js. It's expected that your Webhook sends JSON and your app parses a JSON body
+posted to the endpoint as `req.body`.
+
 ```js
-app.post(
-  '/rebuild',
-  require('@ryanburnette/rebuild-endpoint')({
-    cmd: 'scripts/build-production',
-    secret: 'secret'
-  })
-);
+var endpoint = require('@ryanburnette/rebuild-endpoint')({
+  cmd: 'scripts/build-production',
+  secret: 'secret'
+});
+app.post('/rebuild', jsonParser, endpoint);
 ```
 
 ## Behavior
