@@ -1,16 +1,10 @@
 'use strict';
 
-var exec = require('child_process').exec;
-var fs = require('fs');
-var crypto = require('crypto');
+const exec = require('child_process').exec;
+const fs = require('fs');
+const crypto = require('crypto');
 
-module.exports = function (opts) {
-  var timeout;
-  var locked;
-
-  if (!opts) {
-    opts = {};
-  }
+module.exports = function (opts = {}) {
   if (!opts.cmd) {
     throw Error('opts.cmd is required');
   }
@@ -30,8 +24,9 @@ module.exports = function (opts) {
     opts.branch = 'master';
   }
 
+  var locked, timeout;
   function makeRebuildTimeout(duration) {
-    return setTimeout(function () {
+    timeout = setTimeout(function () {
       locked = true;
       var execOpts = {
         env: {
@@ -45,7 +40,7 @@ module.exports = function (opts) {
   }
 
   if (fs.existsSync(opts.file)) {
-    timeout = makeRebuildTimeout(0);
+    makeRebuildTimeout(0);
     fs.unlinkSync(opts.file);
   }
 
@@ -70,7 +65,7 @@ module.exports = function (opts) {
     if (timeout) {
       clearTimeout(timeout);
     }
-    timeout = makeRebuildTimeout(opts.timeout);
-    res.sendStatus(200);
+    makeRebuildTimeout(opts.timeout);
+    return res.sendStatus(200);
   };
 };

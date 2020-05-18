@@ -1,6 +1,6 @@
 {
   "name": "@ryanburnette/rebuild-endpoint",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Express.js endpoint for having a rebuild endpoint in your app that takes a webhook request from Github.",
   "main": "index.js",
   "repository": {
@@ -8,9 +8,5 @@
     "url": "git+https://github.com/ryanburnette/rebuild-endpoint.git"
   },
   "author": "Ryan Burnette <ryan.burnette@gmail.com> (https://ryanburnette.com)",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ryanburnette/rebuild-endpoint/issues"
-  },
-  "homepage": "https://github.com/ryanburnette/rebuild-endpoint#readme"
+  "license": "ISC"
 }
