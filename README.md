@@ -3,36 +3,38 @@
 [![repo](https://img.shields.io/badge/repository-Github-black.svg?style=flat-square)](https://github.com/ryanburnette/rebuild-endpoint)
 [![npm](https://img.shields.io/badge/package-NPM-green.svg?style=flat-square)](https://www.npmjs.com/package/@ryanburnette/rebuild-endpoint)
 
-Express.js endpoint for having a rebuild endpoint in your app that takes a webhook request from
-Github.
+Express.js endpoint for initiating a rebuild of static assets.
 
 ## Options
 
-- `cmd` Rebuild command. Required.
-- `execCb` Callback passed to `exec`. Might want to console log responses from build command.
-  Optional.
-- `secret` The Github secret. Required.
+- `cmd` The rebuild command.
+- `execOpts` The opts passed to child_process.exec. Take a look at the source
+  for the defaults. Passed options are merged in.
+- `execCb` The child_process.exec callback.
+  https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback
 - `timeout` Time to wait between receiving a webhook and starting the rebuild. Gets reset if another
-  webhook is received while waiting. Defaults to `1000 * 60` (one minute).
-- `branch` Branch to rebuild for. Defaults to `master`.
+  webhook is received while waiting. Defaults to one minute (`1000 * 60`).
+- `filter` A test that must pass for a rebuild to be triggered. This should be a function. Truthy
+  returns trigger a rebuild.
+
+## Filters
+
+This endpoint is expected to be the recipient of a webhook for services like
+Github. Check `filters/` for useful examples.
 
 ## Usage
 
-Works with Express.js. It's expected that your Webhook sends JSON and your app parses a JSON body
-posted to the endpoint as `req.body`.
-
 ```js
-var endpoint = require('@ryanburnette/rebuild-endpoint')({
-  cmd: 'scripts/build-production',
-  secret: 'secret'
-});
-app.post('/rebuild', jsonParser, endpoint);
+var express = require('express');
+var rebuildEndpoint = require('@ryanburnette/rebuild-endpoint');
+
+var app = express();
+
+app.post(
+  '/rebuild',
+  express.json(),
+  rebuildEndpoint({
+    cmd: 'scripts/build-production'
+  })
+);
 ```
-
-## Behavior
-
-- Failed Github verification: `401` do nothing
-- Anything other than a push to master: `200` do nothing
-- Starting rebuild: `200` start rebuild
-- Request a rebuild during the timeout: `200` start the timeout over
-- Request once the rebuild has started: `200` rebuild again after restarting
